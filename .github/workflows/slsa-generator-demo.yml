@@ -52,3 +52,4 @@ jobs:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
       upload-assets: true # Upload provenance to a new release
       provenance-name: "flask_app.intoto.jsonl"
+      upload-tag-name: "v0.0.1"
