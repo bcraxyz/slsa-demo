@@ -12,29 +12,29 @@ jobs:
       name: "publish"
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
-  steps:
-    name: "Checkout repository"
-    uses: "actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b" # tag=v3
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b" # tag=v3
 
-    name: "Setup Python"
-    uses: "actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984" # tag=v4
-    with:
-      python-version: "3.x"
+      - name: "Setup Python"
+        uses: "actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984" # tag=v4
+        with:
+          python-version: "3.x"
 
-    name: "Install dependencies"
-    run: python -m pip install build
+      - name: "Install dependencies"
+        run: python -m pip install build
 
-    name: "Build artifacts using Python"
-    id: build
-    run: |
-      python -m build
+      - name: "Build artifacts using Python"
+        id: build
+        run: |
+          python -m build
 
-    name: "Generate subject for provenance"
-    id: hash
-    run: |
-      cd dist
-      HASHES=$(sha256sum * | base64 -w0)
-      echo "hashes=$HASHES" >> "$GITHUB_OUTPUT"
+      - name: "Generate subject for provenance"
+        id: hash
+        run: |
+          cd dist
+          HASHES=$(sha256sum * | base64 -w0)
+          echo "hashes=$HASHES" >> "$GITHUB_OUTPUT"
 
   provenance:
     needs: [build]
