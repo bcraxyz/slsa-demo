@@ -13,3 +13,4 @@ jobs:
           source-branch: "main"
           source-tag: "v0.0.1"
           provenance-path: "flask_app.intoto.jsonl"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
