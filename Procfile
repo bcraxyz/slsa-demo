@@ -1,1 +1,1 @@
-web: python flask_app/__init__.py
+web: python flask_app/__init__.py:app
