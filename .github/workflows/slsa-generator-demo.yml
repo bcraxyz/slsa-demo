@@ -1,4 +1,4 @@
-name: "SLSA workflow demo"
+name: "SLSA generator demo"
 on:
   workflow_dispatch:
   release:
@@ -6,10 +6,9 @@ on:
     
 jobs:
   build:
-    name: "Build dists"
     runs-on: "ubuntu-latest"
     environment:
-      name: "publish"
+      name: "build"
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
@@ -35,6 +34,14 @@ jobs:
           cd dist
           HASHES=$(sha256sum * | base64 -w0)
           echo "hashes=$HASHES" >> "$GITHUB_OUTPUT"
+      
+      - name: "Upload artifact"
+        uses: "actions/upload-artifact@v3.1.2"
+        with:
+          name: flask_app
+          path: flask_app
+          if-no-files-found: error
+          retention-days: 5
 
   provenance:
     needs: [build]
@@ -45,24 +52,23 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.7.0
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
-      upload-assets: true # Optional: Upload to a new release
+      upload-assets: true # Upload provenance to a new release
 
   release:
-      needs: [provenance]
+      needs: [build, provenance]
       runs-on: "ubuntu-latest"
       permissions:
         contents: write
         packages: write
+      if: startsWith(github.ref, 'refs/tags/')
       steps:
-        - name: "Create a release"
-          id: create_release
-          uses: actions/create-release@v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: "Download artifact"
+          uses: "actions/download-artifact@v3.0.2"
           with:
-            tag_name: ${{ github.event.release.tag_name }}
-            release_name: Release ${{ github.event.release.tag_name }}
-            body: |
-              Release ${{ github.event.release.tag_name }}
-            draft: false
-            prerelease: false
+            name: flask_app
+
+        - name: "Upload assets"
+          uses: "softprops/action-gh-release@v0.1.15"
+          with:
+            files: |
+              flask_app
