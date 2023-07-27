@@ -6,7 +6,15 @@ jobs:
   verify:
     runs-on: "ubuntu-latest"
     steps:
-      - name: "Verify artifact"
+      - name: "Install slsa-verifier"
         uses: slsa-framework/slsa-verifier/actions/installer@v2.3.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: "Verify artifact provenance"
+        run: |
+          slsa-verifier verify-artifact flask_app \
+          --provenance-path flask_app.intoto.jsonl \
+          --source-uri github.com/alphasecio/slsa-demo \
+          --source-branch main
+          --source-tag v0.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
