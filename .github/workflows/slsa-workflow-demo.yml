@@ -14,12 +14,12 @@ jobs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: "Checkout repository"
-        uses: "actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b" # tag=v3
+        uses: "actions/checkout@v3"
 
       - name: "Setup Python"
-        uses: "actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984" # tag=v4
+        uses: "actions/setup-python@v4"
         with:
-          python-version: "3.x"
+          python-version: "3.11"
 
       - name: "Install dependencies"
         run: python -m pip install build
@@ -60,9 +60,9 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            tag_name: ${{ github.ref }}
-            release_name: Release ${{ github.ref }}
+            tag_name: ${{ github.event.release.tag_name }}
+            release_name: Release ${{ github.event.release.tag_name }}
             body: |
-              Release ${{ github.ref }}
+              Release ${{ github.event.release.tag_name }}
             draft: false
             prerelease: false
