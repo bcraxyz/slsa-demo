@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: "ubuntu-latest"
     environment:
-      name: "build"
+      name: "publish"
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
