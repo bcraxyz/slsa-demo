@@ -9,8 +9,4 @@ jobs:
       - name: "Verify artifact"
         uses: slsa-framework/slsa-verifier/actions/installer@v2.3.0
         with:
-          source-uri: "github.com/alphasecio/slsa-demo"
-          source-branch: "main"
-          source-tag: "v0.0.1"
-          provenance-path: "flask_app.intoto.jsonl"
           github-token: ${{ secrets.GITHUB_TOKEN }}
